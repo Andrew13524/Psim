@@ -1,0 +1,13 @@
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.exe
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.deps.json
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.runtimeconfig.json
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.runtimeconfig.dev.json
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.dll
+C:\Users\Andre\source\repos\Psim\Psim\bin\Debug\netcoreapp3.1\Psim.pdb
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.csprojAssemblyReference.cache
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.AssemblyInfoInputs.cache
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.AssemblyInfo.cs
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.csproj.CoreCompileInputs.cache
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.dll
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.pdb
+C:\Users\Andre\source\repos\Psim\Psim\obj\Debug\netcoreapp3.1\Psim.genruntimeconfig.cache

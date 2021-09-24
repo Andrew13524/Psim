@@ -1,4 +1,6 @@
 ﻿using System;
+using Psim.Particles;
+using Psim.Geometry2D;
 
 namespace Psim
 {
@@ -6,7 +8,6 @@ namespace Psim
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
         }
     }
 }

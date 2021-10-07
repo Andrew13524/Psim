@@ -4,7 +4,7 @@ using Psim.Particles;
 namespace ParticleUnitTests
 {
 	[TestClass]
-	public class PhononTest
+	public class PhononTests
     {
 		[TestMethod]
 		public void TestDrift()
@@ -51,7 +51,7 @@ namespace ParticleUnitTests
 			p4.GetCoords(out double p4x, out double p4y);
 
 			Assert.AreEqual(-995, p4x);     // 5 += (-1 * 10 * 100) = -995
-			Assert.AreEqual(995, p4y);     // -5 += (1 * 10 * 100) = 995
+			Assert.AreEqual(995, p4y);      // -5 += (1 * 10 * 100) = 995
 		}
 	}
 }

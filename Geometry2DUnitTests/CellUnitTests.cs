@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Psim.Materials;
 using Psim.ModelComponents;
 using Psim.Particles;
 
@@ -7,10 +8,26 @@ namespace CellUnitTests
     [TestClass]
     public class CellUnitTests
     {
+
         [TestMethod]
         public void TestMergePhonons()
         {
-            Cell c1 = new Cell(5, 5);
+            DispersionData dData;
+            dData.LaData = new double[] { -2.22e-7, 9260.0, 0.0 };
+            dData.TaData = new double[] { -2.28e-7, 5240.0, 0.0 };
+            dData.WMaxLa = 7.63916048e13;
+            dData.WMaxTa = 3.0100793072e13;
+
+            RelaxationData rData;
+            rData.Bl = 1.3e-24;
+            rData.Btn = 9e-13;
+            rData.Btu = 1.9e-18;
+            rData.BI = 1.2e-45;
+            rData.W = 2.42e13;
+
+            Sensor sensor = new Sensor(1, new Material(dData, rData), 1);
+
+            Cell c1 = new Cell(5, 5, sensor);
 
             c1.AddPhonon(new Phonon(1));
             c1.AddPhonon(new Phonon(1));
@@ -26,7 +43,7 @@ namespace CellUnitTests
 
             Assert.AreEqual(6, c1.Phonons.Count);
 
-            Cell c2 = new Cell(0, 20);
+            Cell c2 = new Cell(0, 20, sensor);
 
             c2.AddPhonon(new Phonon(1));
             c2.AddPhonon(new Phonon(1));
@@ -38,7 +55,7 @@ namespace CellUnitTests
 
             Assert.AreEqual(3, c2.Phonons.Count);
 
-            Cell c3 = new Cell(-55, 20);
+            Cell c3 = new Cell(-55, 20, sensor);
 
             c3.AddPhonon(new Phonon(1));
             c3.AddPhonon(new Phonon(1));
@@ -59,9 +76,24 @@ namespace CellUnitTests
         }
 
         [TestMethod]
-        public void MoveToNearestSurface()
+        public void TestMoveToNearestSurface()
         {
-            Cell c1 = new Cell(10, 10);
+            DispersionData dData;
+            dData.LaData = new double[] { -2.22e-7, 9260.0, 0.0 };
+            dData.TaData = new double[] { -2.28e-7, 5240.0, 0.0 };
+            dData.WMaxLa = 7.63916048e13;
+            dData.WMaxTa = 3.0100793072e13;
+
+            RelaxationData rData;
+            rData.Bl = 1.3e-24;
+            rData.Btn = 9e-13;
+            rData.Btu = 1.9e-18;
+            rData.BI = 1.2e-45;
+            rData.W = 2.42e13;
+
+            Sensor sensor = new Sensor(2, new Material(dData, rData), 1);
+
+            Cell c1 = new Cell(10, 10, sensor);
 
             Phonon p1 = new Phonon(1);
 
@@ -126,7 +158,7 @@ namespace CellUnitTests
             Assert.AreEqual(1, dx);
             Assert.AreEqual(-1, dy);
 
-            Cell c2 = new Cell(10, 10);
+            Cell c2 = new Cell(10, 10, sensor);
 
             Phonon p2 = new Phonon(1);
 

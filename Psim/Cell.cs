@@ -15,9 +15,11 @@ using System.Collections.Generic;
 
 using Psim.Geometry2D;
 using Psim.Particles;
+using Psim.Materials;
 
 namespace Psim.ModelComponents
 {
+
 	public enum SurfaceLocation
 	{
 		left = 0,
@@ -33,23 +35,18 @@ namespace Psim.ModelComponents
 		private List<Phonon> incomingPhonons = new List<Phonon>();
 		private ISurface[] surfaces = new ISurface[NUM_SURFACES];
 		public List<Phonon> Phonons { get { return phonons; } }
-
-		public Cell(double length, double width)
-			: base(length, width)
+		private Sensor sensor;
+		public Cell(double length, double width, Sensor sensor) : base(length, width)
 		{
-			for (int i = 0; i < NUM_SURFACES; i++)
-            {
+			this.sensor = sensor;
+			this.sensor.AddToArea(this.Area);
+
+			for (int i = 0; i < NUM_SURFACES; ++i)
+			{
 				surfaces[i] = new BoundarySurface((SurfaceLocation)i, this);
-            }
+			}
 		}
 
-		public void DriftPhonons(double time)
-        {
-			foreach(var p in phonons)
-            {
-				p.Drift(time);
-            }
-        }
 		/// <summary>
 		/// Adds a phonon to the main phonon 'array' of the cell.
 		/// </summary>
@@ -66,6 +63,7 @@ namespace Psim.ModelComponents
 		/// <param name="p">The phonon that will be added</param>
 		public void AddIncPhonon(Phonon p)
 		{
+			// This could cause a very nasty bug later on - be sure to verify now
 			incomingPhonons.Add(p);
 		}
 
@@ -90,93 +88,72 @@ namespace Psim.ModelComponents
 
 		/// <summary>
 		/// Moves a phonon to the surface that it will impact first.
-		/// The phonon will be moved to the surface and the surface
+		/// The phonon will be moved to the surface and the surface!!!!!
 		/// it impacts is returned
 		/// </summary>
 		/// <param name="p">The phonon to be moved</param>
-		/// <returns>The surface that the phonon collides with or null if it doesnt impact</returns>
+		/// <returns>The surface that the phonon collides with or null if it doesnt impact surface</returns>
 		public SurfaceLocation? MoveToNearestSurface(Phonon p)
 		{
-			SurfaceLocation? HitSurface(double p, double d, char axis) // Method that returns a Surface location if px or py come into contact with it
-            {
-				if(d > 0)
-                {
-					if (p >= Length && axis == 'x')
-						return SurfaceLocation.right;
-					else if (p >= Width && axis == 'y')
-						return SurfaceLocation.top;
-                }
-				else if(d < 0)
-                {
-					if (p <= 0 && axis == 'x')
-						return SurfaceLocation.left;
-					else if (p <= 0 && axis == 'y')
-						return SurfaceLocation.bot;
-                }
-				return null;
-            }
-			void UpdatePhonon(SurfaceLocation? hitSurface, double x, double y) // Method that updates phonons direction & coords upon hitting a side
-            {
-				if      (hitSurface == SurfaceLocation.top)   y = Width;
-				else if (hitSurface == SurfaceLocation.bot)   y = 0;
-				else if (hitSurface == SurfaceLocation.right) x = Length;
-				else if (hitSurface == SurfaceLocation.left)  x = 0;
+			// Returns the time taken to for a phonon to move back into the cell or 0 if the phonon did not exit the cell
+			double GetTime(double dist, double pos, double vel)
+			{
+				if (pos <= 0) { return pos / vel; } // pos is negative therefore vel must be negative
+				else if (pos >= dist) { return (pos - dist) / vel; } // pos is + therefore vel is + and len < pos
+				else return 0; // No surface was reached
+			}
 
-				p.SetCoords(x, y);
-
-				BoundarySurface boundarySurface = new BoundarySurface(hitSurface, this);
-				boundarySurface.HandlePhonon(p);
-            }
-
-			p.GetDirection(out double dx, out double dy);
+			p.Drift(p.DriftTime);
 			p.GetCoords(out double px, out double py);
+			p.GetDirection(out double dx, out double dy);
+			double vx = dx * p.Speed;
+			double vy = dy * p.Speed;
 
-			if (dx == 0 && dy == 0)
-				return null;
+			// The longer the time, the sooner the phonon impacted the corresponding surface
+			double timeToSurfaceX = (vx != 0) ? GetTime(Length, px, vx) : 0;
+			double timeToSurfaceY = (vy != 0) ? GetTime(Width, py, vy) : 0;
 
-			while (true) // Continusously add dx/dy to px/py until one side hits
-            {
-				SurfaceLocation? HitSurfaceX = HitSurface(px, dx, 'x');
-				SurfaceLocation? HitSurfaceY = HitSurface(py, dy, 'y');
+			// Time needed to backtrack the phonon to the first surface collision
+			double backtrackTime = Math.Max(timeToSurfaceX, timeToSurfaceY);
+			p.DriftTime = backtrackTime;
+			if (backtrackTime == 0) { return null; } // The phonon did not collide with a surface
+			p.Drift(-backtrackTime);
 
-				if (HitSurfaceX != null || HitSurfaceY != null)
+			// Miminize FP errors and determine impacted surface
+			if (backtrackTime == timeToSurfaceX)
+			{
+				if (vx < 0)
 				{
-					if (HitSurfaceX != null && HitSurfaceY != null) // If hits a corner, randomly select a side
-					{
-						Random rand = new Random();
-						var randValue = rand.Next(0, 2);
-
-						if (randValue == 0)
-						{
-							UpdatePhonon(HitSurfaceX, px, py);
-							return HitSurfaceX;
-						}
-						else
-						{
-							UpdatePhonon(HitSurfaceY, px, py);
-							return HitSurfaceY;
-						}
-					}
-					else if (HitSurfaceX != null)
-					{
-						UpdatePhonon(HitSurfaceX, px, py);
-						return HitSurfaceX;
-					}
-					else if (HitSurfaceY != null)
-					{
-						UpdatePhonon(HitSurfaceY, px, py);
-						return HitSurfaceY;
-					}
+					p.SetCoords(0, null);
+					return SurfaceLocation.left;
 				}
-
-				px += dx;
-				py += dy;
+				else
+					p.SetCoords(Length, null);
+				return SurfaceLocation.right;
+			}
+			else
+			{
+				if (vy < 0)
+				{
+					p.SetCoords(null, 0);
+					return SurfaceLocation.bot;
+				}
+				else
+				{
+					p.SetCoords(null, Width);
+					return SurfaceLocation.top;
+				}
 			}
 		}
 
+		public void TakeMeasurements(double effEnergy, double tEq)
+        {
+			sensor.TakeMeasurements(phonons, effEnergy, tEq);
+        }
+
 		public override string ToString()
 		{
-			return string.Format("{0,-7} {1,-7}", phonons.Count, incomingPhonons.Count);
+			return string.Format("{0,-5} {1,-7} {2,-7}", sensor.ToString(), phonons.Count, incomingPhonons.Count);
 		}
 	}
 }

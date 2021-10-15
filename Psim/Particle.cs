@@ -11,13 +11,13 @@ namespace Psim.Particles
 
 		public Point Position
 		{
-			get => new Point(position.X, position.Y);
+			get => new Point (position.X, position.Y);
 			set => position = value;
 		}
 
 		public Vector Direction
 		{
-			get => new Vector(direction.DX, direction.DY);
+			get => new Vector (direction.DX, direction.DY);
 			set => direction = value;
 		}
 
@@ -26,7 +26,6 @@ namespace Psim.Particles
 		/// and the speed to 0.
 		/// </summary>
 		public Particle() { }
-
 		public Particle(Point position, Vector direction, double speed)
 		{
 			Position = position;
@@ -45,29 +44,20 @@ namespace Psim.Particles
 		/// </summary>
 		/// <param name="px">The x coordinate</param>
 		/// <param name="py">The y coordinate</param>
-		public void SetCoords(double? px, double? py)
-		{
-			position.SetCoords(px, py);
-		}
+		public void SetCoords(double? px, double? py) => position.SetCoords(px, py);
 		/// <summary>
 		/// Get the x and y position coordinates of the particle
 		/// </summary>
 		/// <param name="px">The x coordinate</param>
 		/// <param name="py">The y coordinate</param>
-		public void GetCoords(out double px, out double py)
-		{
-			Position.GetCoords(out px, out py);
-		}
+		public void GetCoords(out double px, out double py) => position.GetCoords(out px, out py);
 		/// <summary>
 		/// Sets the particle's direction vector
 		/// </summary>
 		/// <param name="dx">The x component of the direction vector</param>
 		/// <param name="dy">The y component of the direction vector</param>
 		/// <exception cref="ArgumentOutOfRangeException">Throws if the x or y component is > 1 or < -1."</exception>
-		public void SetDirection(double dx, double dy)
-		{
-			direction.Set(dx, dy);
-		}
+		public void SetDirection(double dx, double dy) => direction.Set(dx, dy);
 		/// <summary>
 		/// Get the x and y components of the particle direction vector
 		/// </summary>
@@ -75,7 +65,8 @@ namespace Psim.Particles
 		/// <param name="dy">The y coordinate</param>
 		public void GetDirection(out double dx, out double dy)
 		{
-			Direction.Get(out dx, out dy);
+			dx = direction.DX;
+			dy = direction.DY;
 		}
 		/// <summary>
 		/// Drifts (moves) the particle in space
@@ -83,13 +74,12 @@ namespace Psim.Particles
 		/// <param name="time">The amount of time the particle drifts</param>
 		public void Drift(double time)
 		{
-			GetDirection(out double dx, out double dy);
-			GetCoords(out double px, out double py);
-			SetCoords(px += (dx * Speed * time), py += (dy * Speed * time));
+			position.GetCoords(out double x, out double y);
+			position.SetCoords(x + Speed * direction.DX * time, y + Speed * direction.DY * time);
 		}
 		/// <summary>
 		/// Gives the particle a random direction vector
-		/// </summary> 
+		/// </summary>
 		/// <param name="r1">A random number in the interval [0,1]</param>
 		/// <param name="r2">A random number in the interval [0,1]</param>
 		public void SetRandomDirection(double r1, double r2)
@@ -98,12 +88,13 @@ namespace Psim.Particles
 			double dy = Math.Sqrt(1 - dx * dx) * Math.Cos(2 * Math.PI * r2);
 			direction.Set(dx, dy);
 		}
+
 		public abstract void Update(double frequency, double speed, Polarization pol);
 		public override string ToString()
 		{
 			return $"Position: {Position}\n" +
 				   $"Direction: {Direction}\n" +
-				   $"Speed: {Speed}\n";
+				   $"Speed: {Speed}";
 		}
 	}
 }

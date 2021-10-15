@@ -148,7 +148,7 @@ namespace Psim.Materials
 #if true       // Derivative of Bose-Einstein
 				double numer = Math.Pow(constCalc * freq, 2) * BOLTZ * Math.Exp(constCalc * freq);
 				double denom = Math.Pow(Math.Exp(constCalc * freq) - 1, 2) / freqWidth / densities[i];
-#else         // Bose-Einstein
+#else          // Bose-Einstein
 				double numer = freq * HBAR * freqWidth * densities[i];
 				double denom = (Math.Exp(constCalc * freq) - 1);
 #endif

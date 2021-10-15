@@ -2,9 +2,13 @@
  * 
  * In this lab, we have split the refactored the Cell class by creating a new Sensor class
  * and moving much of the functionality of recording the temperature/flux 
- * measurements into this new class. Which SOLID principles are we doing our best to abide
- * by here? Do you think this refactoring was worthwhile? Justify your answer by providing
- * some upsides and downsides.
+ * measurements into this new class. This also enabled us to separate the link multiple cells to 
+ * a single sensor so that we are not required to take measurements in each cell. This could
+ * be a major performance issue if we want to use many tiny cells to build certain types of geometries.
+ * 
+ * Which SOLID principles are we doing our best to abide by here? 
+ * Do you think this refactoring was worthwhile? 
+ * Justify your answer by providing some upsides and downsides.
  *  
  */
 
@@ -40,6 +44,7 @@ namespace Psim.ModelComponents
 			ScatterTable = material.ScatterTable(initTemp);
 			Temperature = initTemp;
 		}
+
 		public void AddToArea(double area) => AreaCovered += area;
 		public Tuple<double, double>[] GetEmitData(double temp, out double energy)
 		{
@@ -83,7 +88,6 @@ namespace Psim.ModelComponents
 			BaseTable = Material.BaseData(Temperature, out heatCapacity);
 			ScatterTable = Material.ScatterTable(Temperature);
 		}
-
 		public override string ToString() => $"Sensor {ID}: {Math.Round(Temperature, 2)}";
 	}
 

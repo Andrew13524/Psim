@@ -1,4 +1,22 @@
-﻿using System;
+﻿/* Lab Question: Here our Phonon class inherits from the Particle class implying an 'Is-a' relationship
+                 Give some thought as to what this class would look like if we used composition ('Has-a')
+				 rather than inheritance. It would look something like
+
+				 class Phonon 
+				 {
+					private Particle particle;
+				    ...
+				 }
+
+				 Do you think this would be a better or worse approach than inheritance? Why or why not?
+				 Should our Particle class inherit from the Point class or is the composition approach
+	             reasonable in that case?
+
+				 Similarly, should Particle inherit from Point or is the composition design we have used
+				 a reasonable approach?
+*/
+
+using System;
 
 namespace Psim.Particles
 {
@@ -17,6 +35,9 @@ namespace Psim.Particles
 		public int Sign { get; private set; }
 		public double Frequency { get; private set; }
 		public Polarization Polarization { get; private set; }
+		/// <summary>
+		/// If a phonon is inactive, it should be removed from the simulation
+		/// </summary>
 		public bool Active { get; set; }
 		public double DriftTime { get; set; }
 
@@ -24,6 +45,7 @@ namespace Psim.Particles
 		{
 			SetSign(sign);
 			Active = true;
+			DriftTime = 0;
 		}
 
 		public Phonon(Phonon p) : base(p)
@@ -57,6 +79,7 @@ namespace Psim.Particles
 		public override string ToString()
 		{
 			return $"Frequency: {Frequency}\n" +
+				   $"Speed: {Speed}\n" +
 				   $"Polarization: {Polarization}\n" +
 				   base.ToString();
 		}

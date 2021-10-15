@@ -68,11 +68,6 @@ namespace Psim
 					throw new ArgumentOutOfRangeException("Direction components must be in the range [-1, 1]");
 				}
 			}
-			public void Get(out double dx, out double dy)
-            {
-				dx = DX;
-				dy = DY;
-            }
 			public override string ToString() => $"({DX}, {DY})\n";
 		}
 

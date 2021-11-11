@@ -55,11 +55,15 @@ namespace Psim.ModelComponents
 			}
 			return cell;
 		}
-	}
+
+        public override string ToString()
+        {
+			return "Boundary Surface";
+        }
+    }
 
 	public class TransitionSurface : BoundarySurface
 	{
-		//TODO: Implement constructor
 		public TransitionSurface(SurfaceLocation location, Cell cell) : base(location, cell) { }
 
 		/// <summary>
@@ -71,18 +75,29 @@ namespace Psim.ModelComponents
 		/// <returns>The new cell in which the phonon will reside</returns>
 		public override Cell HandlePhonon(Phonon p)
 		{
+			// Thanks Christian
 			p.GetCoords(out double px, out double py);
-
-			if (Location == SurfaceLocation.bot)
-				p.SetCoords(px, cell.Width);
-			if (Location == SurfaceLocation.right)
-				p.SetCoords(0, py);
-			if (Location == SurfaceLocation.top)
+			if (Location is SurfaceLocation.top)
+			{
 				p.SetCoords(px, 0);
-			if (Location == SurfaceLocation.left)
+			}
+			if (Location is SurfaceLocation.right)
+			{
+				p.SetCoords(0, py);
+			}
+			if (Location is SurfaceLocation.bot)
+			{
+				p.SetCoords(px, cell.Width);
+			}
+			if (Location is SurfaceLocation.left)
+			{
 				p.SetCoords(cell.Length, py);
-
+			}
 			return cell;
+		}
+		public override string ToString()
+		{
+			return "Transition Surface";
 		}
 	}
 
@@ -93,10 +108,11 @@ namespace Psim.ModelComponents
 		public double Temp { get; }
 		public int EmitPhonons { get; private set; }
 		public double EmitPhononsFrac { get; private set; }
+
 		public EmitSurface(SurfaceLocation location, Cell cell, double temp) : base(location, cell)
 		{
-			Temp = temp;
-			//EmitTable = cell.EmitData(temp, out emitEnergy);
+			this.Temp = temp;
+			EmitTable = cell.EmitData(temp, out emitEnergy);
 		}
 
 		/// <summary>
@@ -111,6 +127,7 @@ namespace Psim.ModelComponents
 			p.Active = false;
 			return cell;
 		}
+
 		public double GetEmitEnergy(double tEq, double simTime, double length)
 		{
 			return emitEnergy * length * simTime / 4 * Math.Abs(Temp - tEq);
@@ -126,14 +143,13 @@ namespace Psim.ModelComponents
 		public void SetEmitPhonons(double tEq, double effEnergy, double timeStep, double length)
 		{
 			double emitPhonons = GetEmitEnergy(tEq, timeStep, length) / effEnergy;
-
+			// Thanks Andrew
 			EmitPhonons = (int)Math.Floor(emitPhonons);
 			EmitPhononsFrac = emitPhonons - EmitPhonons;
 		}
-
+		public override string ToString()
+		{
+			return "Emit Surface";
+		}
 	}
-
-
-
-
 }

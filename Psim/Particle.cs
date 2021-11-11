@@ -11,13 +11,13 @@ namespace Psim.Particles
 
 		public Point Position
 		{
-			get => new Point (position.X, position.Y);
+			get => new Point(position.X, position.Y);
 			set => position = value;
 		}
 
 		public Vector Direction
 		{
-			get => new Vector (direction.DX, direction.DY);
+			get => new Vector(direction.DX, direction.DY);
 			set => direction = value;
 		}
 

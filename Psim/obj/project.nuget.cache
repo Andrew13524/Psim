@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "5Q0HpcFBOs3/Ul015rsPNk6KXUy3QkspNKHCFNOJ+VK1nBAVBK/aHgBxpS70lzj2v6v2NO5sA4WhTrjOidfoww==",
+  "dgSpecHash": "eQ/qD5S/Da3U03jClsYADpTa0LdUwfCjW3i9/LGEeTUj2BFMlO5ABu42ybDugkQfqYMyUhYmLT/SlZvKB0yigQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Andre\\source\\repos\\Psim\\Psim\\Psim.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Andre\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

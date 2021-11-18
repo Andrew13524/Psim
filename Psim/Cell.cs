@@ -30,11 +30,18 @@ namespace Psim.ModelComponents
 	public class Cell : Rectangle
 	{
 		private const int NUM_SURFACES = 4;
-		private List<Phonon> phonons = new List<Phonon>();
-		private List<Phonon> incomingPhonons = new List<Phonon>();
+		private List<Phonon> phonons = new List<Phonon>() { };
+		private List<Phonon> incomingPhonons = new List<Phonon>() { };
 		private ISurface[] surfaces = new ISurface[NUM_SURFACES];
-		public List<Phonon> Phonons { get { return phonons; } }
 		private Sensor sensor;
+
+		public Tuple<double, double>[] BaseTable { get { return sensor.BaseTable; } }
+		public Tuple<double, double>[] ScatterTable { get { return sensor.ScatterTable; } }
+		public Sensor Sensor { get { return sensor; } }
+		public Material Material { get { return sensor.Material; } }
+		public double InitTemp { get { return sensor.InitTemp; } }
+		public List<Phonon> Phonons { get { return phonons; } }
+
 
 		public Cell(double length, double width, Sensor sensor) : base(length, width)
 		{
@@ -48,6 +55,7 @@ namespace Psim.ModelComponents
 
 		public void SetEmitSurface(SurfaceLocation location, double temp)
 		{
+			// Thanks Josh
 			surfaces[(int)location] = new EmitSurface(location, this, temp);
 		}
 
@@ -138,7 +146,6 @@ namespace Psim.ModelComponents
 		/// <param name="p">The phonon that will be added</param>
 		public void AddIncPhonon(Phonon p)
 		{
-			// This could cause a very nasty bug later on - be sure to verify now
 			incomingPhonons.Add(p);
 		}
 
@@ -231,5 +238,55 @@ namespace Psim.ModelComponents
 			return string.Format("{0,-20} {1,-7} {2,-7}", sensor.ToString(), phonons.Count, incomingPhonons.Count);
 		}
 
+		public List<EmitSurfaceData> EmitPhononData(double rand)
+		{
+			List<EmitSurfaceData> emitPhononData = new List<EmitSurfaceData>() { };
+			foreach (var surface in surfaces)
+			{
+				if (surface is EmitSurface emitSurface)
+				{
+					EmitSurfaceData data;
+					data.Table = emitSurface.EmitTable;
+					data.Location = emitSurface.Location;
+					data.Temp = emitSurface.Temp;
+					data.EmitPhonons = emitSurface.EmitPhonons;
+					if (emitSurface.EmitPhononsFrac >= rand)
+						++data.EmitPhonons;
+					emitPhononData.Add(data);
+				}
+			}
+			return emitPhononData;
+		}
+
+		// Temporary testing method
+		public int TotalEmitPhonons()
+		{
+			int total = 0;
+			foreach (ISurface surface in surfaces)
+			{
+				if (surface is EmitSurface emitSurface)
+				{
+					total += emitSurface.EmitPhonons;
+				}
+			}
+			return total;
+		}
+	}
+
+	public struct EmitSurfaceData
+	{
+		public Tuple<double, double>[] Table;
+		public SurfaceLocation Location;
+		public double Temp;
+		public int EmitPhonons;
+
+		public void Deconstruct(out Tuple<double, double>[] table, out SurfaceLocation loc,
+								out double temp, out int emitPhonons)
+		{
+			table = Table;
+			loc = Location;
+			temp = Temp;
+			emitPhonons = EmitPhonons;
+		}
 	}
 }

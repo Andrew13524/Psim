@@ -10,7 +10,7 @@ using Psim.ModelComponents;
 
 namespace Psim.IOManagers
 {
-    public static class InputManager
+    static class InputManager
     {
         public static Model InitializeModel(string path)
         {

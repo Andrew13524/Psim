@@ -85,6 +85,16 @@ namespace Psim
 				Width = width;
 				Area = Length * Width;
 			}
+			public Point GetRandPoint(double r1, double r2)
+			{
+				bool InRange(double x) => x <= 1 && x >= 0;
+				if (InRange(r1) && InRange(r2))
+				{
+					return new Point(r1 * Length, r2 * Width);
+				}
+				throw new ArgumentOutOfRangeException("r1 and r2 must be in the range [0, 1]");
+			}
+
 		}
 	}
 }

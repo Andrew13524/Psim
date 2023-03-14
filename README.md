@@ -11,7 +11,7 @@ Below is an example of how the phonons move through the cells:
 ![movement](https://user-images.githubusercontent.com/77464600/225080354-573aafc0-c127-4308-9ac3-bab4a3730056.PNG)
 
 The simulation will detect the temperature of each cell, and where all the phonons move through them.
-When it begins running, a console with open up:
+When it begins running, a console will open up:
 
 ![sim](https://user-images.githubusercontent.com/77464600/225081502-02b98b4a-c442-49bd-8694-97e58b474653.PNG)
 
